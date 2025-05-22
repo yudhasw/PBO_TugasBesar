@@ -14,6 +14,9 @@
             <tr>
                 <td colspan="2"><input type="submit" value="Login"></td>
             </tr>
+            <tr>
+                <td>Belum punya akun? <a href="register.jsp">Daftar di sini</a></td>
+            </tr>
         </table>
     </form>
 
