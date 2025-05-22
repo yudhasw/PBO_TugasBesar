@@ -4,7 +4,7 @@ Dokumentasi tugas besar mata kuliah Pemrograman Berorientasi Objek kelompok 4 ke
 2. Fransiskus Harris Berliandu (103012330401)
 3. Alif Ihsan
 4. Arif Rahmatiana
-5. ⁠Dhafin Ghiffary
+5. ⁠Dhafin Ghiffary (103012300348)
 6. Syauqi Nurfikri Rahman
 
 # Judul Proyek
