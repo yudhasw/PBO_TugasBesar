@@ -6,7 +6,6 @@ public class Admin extends User {
         this.hakAkses = hakAkses;
     }
 
-    // Method sesuai class diagram
     public void TambahHapusBuku() {
         
     }
