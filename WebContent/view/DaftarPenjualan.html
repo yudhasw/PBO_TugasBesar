@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Penjualan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        button.delete-btn {
+            margin-left: 10px;
+            color: white;
+            background-color: red;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button#submit-btn {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 250px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Daftar Penjualan</h1>
+
+    <ul id="book-list">
+      <h2></>Buku terjual <button onclick="hapusBuku(this)">Hapus</button></h2>
+      <h2>Total buku <button onclick="hapusBuku(this)">Hapus</button></h2>
+    </ul>
+
+    <input type="text" id="book-input" placeholder="Masukkan nama buku">
+    <button onclick="tambahBuku()">Tambah Buku Terjual</button>
+
+    <br>
+    <button id="submit-btn" title="Update">update</button>
+
+    <script>
+        function tambahBuku() {
+            const input = document.getElementById("book-input");
+            const bookName = input.value.trim();
+            if (bookName) {
+                const li = document.createElement("li");
+                li.innerHTML = ${bookName} <button class="delete-btn" onclick="hapusBuku(this)">Hapus</button>;
+                document.getElementById("book-list").appendChild(li);
+                input.value = "";
+            } else {
+                alert("Nama buku tidak boleh kosong.");
+            }
+        }
+
+        function hapusBuku(button) {
+            const li = button.parentElement;
+            li.remove();
+        }
+    </script>
+</body>
+</html>
