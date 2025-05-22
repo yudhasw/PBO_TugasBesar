@@ -2,7 +2,7 @@ public class Admin extends User {
     private String hakAkses;
 
     public Admin(String username, String password, String hakAkses) {
-        super(username, password, "A"); // Prefix "ADM" untuk ID Admin
+        super(username, password, "A"); 
         this.hakAkses = hakAkses;
     }
 
