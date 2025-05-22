@@ -2,97 +2,93 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pembelian Buku | Toko Buku Online</title>
+    <title>Pembelian Buku</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
-            background: #f5f5f5;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            text-align: center;
         }
         .container {
             width: 80%;
             margin: 30px auto;
-            background-color: white;
+            background: #fff;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px #ccc;
         }
-        .book-info, .form-section {
-            margin-bottom: 30px;
+        h2 {
+            text-align: center;
         }
-        .book-info img {
-            float: left;
-            margin-right: 20px;
-        }
-        .book-info h2 {
-            margin-top: 0;
-        }
-        form label {
+        label {
             display: block;
             margin-top: 10px;
         }
-        form input, form select, form textarea {
+        input, select {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
         }
-        .summary {
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
-        }
         .btn {
-            background-color: #28a745;
-            color: white;
-            padding: 12px 20px;
-            border: none;
             margin-top: 20px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            width: 100%;
             cursor: pointer;
         }
         .btn:hover {
-            background-color: #218838;
+            background: #218838;
+        }
+        .nota {
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Toko Buku Online</h1>
-</header>
-
 <div class="container">
-    <div class="book-info">
-        <img src="cover-buku.jpg" alt="Sampul Buku" width="120">
-        <h2>Judul Buku: Belajar Pemrograman Go</h2>
-        <p>Penulis: Jane Doe</p>
-        <p>Harga: Rp 85.000</p>
+    <h2>Formulir Pembelian Buku</h2>
+
+    <!-- Informasi Buku -->
+    <div id="info-buku">
+        <p><strong>Judul Buku:</strong> Belajar Pemrograman Go</p>
+        <p><strong>Penulis:</strong> Jane Doe</p>
+        <p><strong>Harga:</strong> Rp 85.000</p>
     </div>
 
-    <div class="form-section">
-        <h3>Informasi Pembeli</h3>
-        <form>
-            <label for="nama">Nama Lengkap:</label>
-            <input type="text" id="nama" name="nama">
+    <!-- Form Pembelian -->
+    <form id="formPembelian">
+        <label for="id_pembelian">ID Pembelian:</label>
+        <input type="text" id="id_pembelian" required>
 
-            <label for="alamat">Alamat Pengiriman:</label>
-            <textarea id="alamat" name="alamat"></textarea>
+        <label for="id_pengguna">ID Pengguna:</label>
+        <input type="text" id="id_pengguna" required>
 
-            <label for="metode">Metode Pembayaran:</label>
-            <select id="metode" name="metode">
-                <option value="transfer">Transfer Bank</option>
-                <option value="cod">Bayar di Tempat (COD)</option>
-                <option value="ewallet">E-Wallet</option>
-            </select>
+        <label for="metodePembayaran">Metode Pembayaran:</label>
+        <select id="metodePembayaran" required>
+            <option value="">-- Pilih --</option>
+            <option value="Transfer Bank">Transfer Bank</option>
+            <option value="COD">COD</option>
+            <option value="E-Wallet">E-Wallet</option>
+        </select>
 
-            <div class="summary">
-                <p><strong>Total: Rp 85.000</strong></p>
-                <button type="submit" class="btn">Konfirmasi Pembelian</button>
-            </div>
-        </form>
+        <button type="submit" class="btn">Konfirmasi Pembelian</button>
+    </form>
+
+    <!-- Nota Pembelian -->
+    <div class="nota" id="notaPembelian">
+        <h3>Nota Pembelian</h3>
+        <p><strong>ID Pembelian:</strong> <span id="nota_id"></span></p>
+        <p><strong>ID Pengguna:</strong> <span id="nota_pengguna"></span></p>
+        <p><strong>Buku:</strong> Belajar Pemrograman Go</p>
+        <p><strong>Penulis:</strong> Jane Doe</p>
+        <p><strong>Harga:</strong> Rp 85.000</p>
+        <p><strong>Metode Pembayaran:</strong> <span id="nota_metode"></span></p>
+        <p style="color: green;"><strong>Pembelian Telah Dikonfirmasi.</strong></p>
     </div>
 </div>
 
