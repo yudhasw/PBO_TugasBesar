@@ -1,0 +1,143 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 22 May 2025, 19.04.55
+    Author     : GAMING 3
+*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #4A90E2;
+    color: white;
+    height: 132px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nama-logo{
+    margin-left: 20px;
+    padding-right: 40px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.nama-logo h1{
+    font-size: 20px;
+    margin: 20px;
+}
+
+.nama-logo img{
+    background-color: white;
+    padding: 20px;
+}
+
+.search-input{
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input input{
+    width: 500px;
+    padding: 15px;
+    border: none;
+    border-radius: 35px;
+}
+
+.profil {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20px;
+    padding-left: 40px;
+}
+
+.profil h3 {
+    text-align: center;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.profil img {
+    background-color: #6c757d;
+    padding: 15px;
+    border: none;
+    border-radius: 100px;
+}
+
+h2 {
+    margin-left: 40px;
+    font-size: 30px;
+}
+
+.rekomendasi-buku {
+    display: flex;
+    justify-content: space-around;
+    margin: 0px 40px 40px 40px;
+    padding: 20px;
+    background-color: #F2F2F2;
+    border: none;
+    border-radius: 32px;
+}
+
+.book-item {
+    margin: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-item img{
+    width: 190px;
+    height: 250px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-item p{
+    text-align: center;
+    font-weight: bold;
+}
+
+.fitur {
+    display: flex;
+    justify-content: space-around;
+    margin: 0px 40px 40px 40px;
+    padding: 20px;
+    background-color: #F2F2F2;
+    border: none;
+    border-radius: 32px;
+}
+
+.option {
+    margin: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.option img {
+    width: 150px;
+    height: 150px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option p {
+    text-align: center;
+    font-weight: bold;
+}
+
+
