@@ -1,26 +1,167 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<center>
-    <h1>Login</h1>
-    <form action="login" method="post">
-        <table>
-            <tr>
-                <td><label for="username">Username:</label></td>
-                <td><input type="text" id="username" name="username" required></td>
-            </tr>
-            <tr>
-                <td><label for="password">Password:</label></td>
-                <td><input type="password" id="password" name="password" required></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="submit" value="Login"></td>
-            </tr>
-            <tr>
-                <td>Belum punya akun? <a href="register.jsp">Daftar di sini</a></td>
-            </tr>
-        </table>
-    </form>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String status = (String) request.getAttribute("status");
+    if (status == null) {
+        status = "Login berhasil";
+    }
+    boolean isLoginFailed = !"Login berhasil".equals(status);
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
 
-    <% if (request.getAttribute("error") != null) { %>
-        <p style="color: red;"><%= request.getAttribute("error") %></p>
-    <% } %>
-</center>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background: #f0f2f5;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            height: 80vh;
+            width: 100vw;
+            max-width: 900px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+
+            <% if (isLoginFailed) { %> animation: shake 0.3s; <% } %>
+        }
+
+        .image-section {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') no-repeat center center;
+            background-size: cover;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section h2 {
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: #333;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="password"] {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1.5px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-error {
+            border-color: #d9281e !important;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        button {
+            padding: 14px;
+            background: #4a90e2;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background: #357ABD;
+        }
+
+        .footer-note {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+                max-width: 100vw;
+            }
+
+            .image-section {
+                height: 200px;
+                flex: none;
+            }
+
+            .form-section {
+                padding: 30px 20px;
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-section"></div>
+        <div class="form-section">
+            <h2>Login</h2>
+
+            <% if (isLoginFailed) { %>
+                <div class="error-message">Username atau password salah!</div>
+            <% } %>
+
+            <form action="LoginController" method="post">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Masukkan username" required class="<%= isLoginFailed ? "input-error" : "" %>" >
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Masukkan password" required class="<%= isLoginFailed ? "input-error" : "" %>">
+                <button type="submit">Login</button>
+            </form>
+
+            <div class="footer-note">
+                Belum punya akun? <a href="register.jsp" style="color:#4a90e2; text-decoration:none;">Register di sini</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
