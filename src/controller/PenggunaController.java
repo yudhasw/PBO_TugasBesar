@@ -23,6 +23,8 @@ public class PenggunaController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
         String username = (String) request.getSession().getAttribute("username");
@@ -35,74 +37,69 @@ public class PenggunaController extends HttpServlet {
 
         String status = null;
 
+        String statusWishlist = request.getParameter("statusWishlist");
+
+        if (statusWishlist != null && !statusWishlist.isEmpty() && !statusWishlist.isBlank()) {
+            String idPengguna = request.getParameter("idPengguna");
+            String idBuku = request.getParameter("idBuku");
+
+            if (idPengguna != null && idBuku != null) {
+                Pengguna wishlist = new Pengguna();
+                wishlist.Wishlist(idPengguna, idBuku, statusWishlist);
+            }
+        }
+
         if (newUsername != null && !newUsername.isEmpty()) {
             Pengguna pengguna = new Pengguna(username, password);
             status = pengguna.updateUsername(newUsername);
 
-            if ("Update username berhasil".equals(status)) {
-                request.getSession().setAttribute("username", newUsername);
+            if ("Username berhasil diperbarui.".equals(status)) {
+                request.getSession().setAttribute("username", newUsername); // update session
+                username = newUsername; // sync ke bawah
             }
         }
-
+        
         if (oldPassword != null && newPassword != null && confirmPassword != null) {
-            if (oldPassword.equals(password)) {
-                if (newPassword.equals(confirmPassword)) {
-                    Pengguna pengguna = new Pengguna(username, oldPassword);
-                    status = pengguna.updatePassword(newPassword);
-                } else {
-                    status = "Password dan konfirmasi password tidak cocok";
-                }
-            } else {
+            Pengguna pengguna = new Pengguna(username, null);
+            String realPassword = pengguna.getPasswordFromDB();
+
+            if (realPassword == null) {
+                status = "Gagal memverifikasi password lama.";
+            } else if (!oldPassword.equals(realPassword)) {
                 status = "Password lama yang Anda masukkan salah";
+            } else if (!newPassword.equals(confirmPassword)) {
+                status = "Password baru dan konfirmasi tidak cocok";
+            } else {
+                status = pengguna.updatePassword(newPassword);
+                if ("Password berhasil diperbarui.".equals(status)) {
+                    request.getSession().setAttribute("password", newPassword);
+                }
             }
         }
 
-        if (status != null && status.contains("berhasil")) {
-            response.sendRedirect("profilPengguna.jsp?status=" + status);
+        if (status != null && !status.isEmpty()) {
+            response.sendRedirect("profilPengguna.jsp?status=" + URLEncoder.encode(status, StandardCharsets.UTF_8.toString()));
         } else {
-            request.setAttribute("status", status);
             RequestDispatcher dispatcher = request.getRequestDispatcher("profilPengguna.jsp");
             dispatcher.forward(request, response);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet untuk mengatur perubahan username, password, dan wishlist pengguna";
+    }
 }
+
