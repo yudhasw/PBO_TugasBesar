@@ -5,6 +5,8 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="classes.JDBC" %>
 <%
     String username = (String) session.getAttribute("username");
 
@@ -22,6 +24,7 @@
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
+                background-color: #F2F2F2;
             }
 
             a {
@@ -58,18 +61,62 @@
                 height: 60px;
             }
 
-            .search-input{
+            .search-input {
                 flex-grow: 1;
                 display: flex;
                 justify-content: center;
+                position: relative;
+                margin-top: 20px;
+            }
+            .search-button {
+                background-color: #4A90E2;
+                border: 1px white solid;
+                color: white;
+                padding: 0 20px;
+                border-radius: 0 35px 35px 0;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
             }
 
-            .search-input input{
-                width: 500px;
+            .search-button:hover {
+                background-color: #357ABD;
+            }
+
+            .search-input input {
+                width: 450px;
                 padding: 15px;
                 border: none;
-                border-radius: 35px;
+                border-radius: 35px 0 0 35px;
+                font-size: 14px;
             }
+
+            #clearBtn {
+                position: absolute;
+                right: 80px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .cart-icon {
+                font-size: 22px;
+                color: white;
+                margin-right: 20px;
+                position: relative;
+                transition: color 0.3s ease;
+            }
+
+            .cart-icon:hover {
+                color: #FFD700;
+            }
+
+            .cart-icon i {
+                vertical-align: middle;
+            }
+
 
             .profil {
                 display: flex;
@@ -77,7 +124,6 @@
                 justify-content: space-between;
                 align-items: center;
                 margin-right: 20px;
-                margin-left: 40px;
             }
 
             .profil h3{
@@ -100,7 +146,7 @@
             }
 
             .profil-menu:hover{
-                background-color: grey;
+                background-color: #357ABD;
                 border-radius: 32px;
             }
 
@@ -153,7 +199,7 @@
                 justify-content: flex-start;
                 margin: 0px 40px 40px 40px;
                 padding: 20px;
-                background-color: #F2F2F2;
+                background-color: white;
                 border: none;
                 border-radius: 32px;
                 overflow-x: auto;
@@ -164,24 +210,22 @@
                 display: none;
             }
 
-            .rekomendasi-buku a {
-                border: solid grey 1px;
-                border-radius: 10px;
-                margin: 20px;
-            }
-
-            .rekomendasi-buku a:hover {
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.08);
-            }
-
             .book-item {
+                background-color: white;
                 margin: 20px;
-                position: relative; /* Pastikan .book-item relatif untuk posisi absolut anaknya */
+                position: relative;
                 display: flex;
                 flex-direction: column;
-                height: 250px;
+                height: 230px;
                 width: 110px;
                 justify-content: flex-start;
+                padding: 20px;
+                border: solid grey 1px;
+                border-radius: 10px;
+            }
+
+            .book-item:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             }
 
             .book-item img {
@@ -195,42 +239,47 @@
                 z-index: 0;
             }
 
-            .book-item .wishlist-btn {
+            .book-item p {
+                text-align: left;
+                margin: 0;
+            }
+
+            .wishlist-btn {
                 background-color: transparent;
                 color: grey;
                 border: none;
                 font-size: 20px;
                 cursor: pointer;
                 position: absolute;
-                top: -15px;
-                right: -15px;
+                top: 5px;
+                right: 5px;
                 padding: 10px;
                 border-radius: 50%;
                 transition: background-color 0.3s ease;
                 z-index: 1;
             }
 
-            .book-item .wishlist-btn:hover {
-                background-color: rgba(255, 87, 51, 0.2);
+            .wishlist-btn:hover {
+                background-color: rgba(255, 87, 51, 0.15);
             }
 
-            .book-item .wishlist-btn:focus {
+            .wishlist-btn:focus {
                 outline: none;
             }
 
-            .book-item p {
-                text-align: left;
-                margin: 0;
+            .wishlist-btn.active {
+                color: red;
             }
 
-            .book-item #penulis {
+
+            #penulis {
                 font-weight: normal;
                 font-size: 11px;
                 color: grey;
                 margin-top: 10px;
             }
 
-            .book-item #judul {
+            #judul {
                 font-weight: normal;
                 font-size: 14px;
                 word-wrap: break-word;
@@ -242,10 +291,12 @@
                 text-overflow: ellipsis;
             }
 
-            .book-item #harga {
+            #harga {
                 font-weight: bold;
                 font-size: 15px;
-                margin-top: auto;
+                margin-top: 10px;
+                bottom: 20px;
+                position: absolute;
             }
 
             .scroll-button {
@@ -329,17 +380,28 @@
             }
 
             #wishlist-message {
-                margin-top: 10px;
-                color: green;
+                display: none;
+                position: fixed;
+                top: 140px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #4A90E2;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 32px;
                 font-weight: bold;
+                font-size: 16px;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                transition: opacity 0.3s ease;
+                opacity: 1;
             }
 
         </style>
         <title>E-TokoBuku</title>
     </head>
     <body>
-        <!-- Pesan status -->
-        <div id="wishlist-message" style="display: none; color: green; font-weight: bold;"></div>
+        <div id="wishlist-message"></div>
         <div class="header">
             <a href="pengguna.jsp">
                 <div class="nama-logo">
@@ -349,8 +411,19 @@
             </a>
 
             <div class="search-input">
-                <input type="text" placeholder="Search">
+                <form action="searchResult.jsp" method="get" style="position: relative; display: flex;">
+                    <input type="text" name="query" id="searchInput" placeholder="Search" required oninput="toggleClearButton()">
+                    <span id="clearBtn" onclick="clearSearch()" style="display:none;">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
             </div>
+            <a href="keranjang.jsp" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -369,58 +442,58 @@
 
         <h2>Rekomendasi Buku</h2>
         <div class="rekomendasi-buku">
+
             <button class="scroll-button left">&#8592;</button>
-            <a href="url">
-                <div class="book-item">
-                    <button class="wishlist-btn">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <img src="img" alt="Buku 1">
-                    <p id="penulis">Penulis</p>
-                    <p id="judul">Judul Buku 1</p>
-                    <p id="harga">Rp50.000</p>
-                </div>
-            </a>
 
-            <a href="url">
-                <div class="book-item">
-                    <button class="wishlist-btn">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <img src="img" alt="Buku 1">
-                    <p id="penulis">Penulis</p>
-                    <p id="judul">Judul Buku 2 ini panjang</p>
-                    <p id="harga">Rp50.000</p>
-                </div>
-            </a>
+            <%
+                try {
+                    JDBC db = new JDBC();
+                    ResultSet rs = db.getDataAll("SELECT id, penulis, judul, harga FROM buku");
 
-            <a href="url">
-                <div class="book-item">
-                    <button class="wishlist-btn">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <img src="img" alt="Buku 1">
-                    <p id="penulis">Penulis</p>
-                    <p id="judul">Judul Buku 3 ini sangat amat teramat panjang</p>
-                    <p id="harga">Rp50.000</p>
-                </div>
-            </a>
+                    while (rs != null && rs.next()) {
+                        String idBuku = rs.getString("id");
+                        ResultSet rsWishlist = db.getDataAll("SELECT * FROM wishlist WHERE idPengguna=(SELECT id FROM pengguna WHERE username='" + username + "') AND idBuku='" + idBuku + "'");
+                        boolean isInWishlist = rsWishlist.next();
+                        rsWishlist.close();
+            %>
+            <div class="book-item">
+                <button class="wishlist-btn <%= isInWishlist ? "active" : ""%>" data-id="<%= idBuku%>" onclick="toggleWishlist(event, this)">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <a href="detailBuku.jsp?id=<%= idBuku%>">
+                    <img src="https://i.pinimg.com/736x/d0/c6/41/d0c641b5e8f7874db6eb2d9a8bbc775e.jpg" alt="<%= rs.getString("judul")%>">
+                    <p id="penulis"><%= rs.getString("penulis")%></p>
+                    <p id="judul"><%= rs.getString("judul")%></p>
+                    <p id="harga"><%= rs.getString("harga")%></p>
+                </a>
+            </div>
+            <%
+                    }
+                    if (rs != null) {
+                        rs.close();
+                    }
+                } catch (Exception e) {
+                    out.println("<p style='color:red'>Terjadi error: " + e.getMessage() + "</p>");
+                    e.printStackTrace(new java.io.PrintWriter(out));
+                }
+            %>
 
             <button class="scroll-button right">&#8594;</button>
         </div>
 
         <div class="fitur">
+
             <a href="url">
                 <div class="opsi">
                     <img src="src" />
-                    <p>Buku Favorit</p>
+                    <p>Buku Saya</p>
                 </div>
             </a>
 
             <a href="url">
                 <div class="opsi">
                     <img src="src" />
-                    <p>Buku Saya</p>
+                    <p>Review Buku</p>
                 </div>
             </a>
 
@@ -499,22 +572,44 @@
                 document.getElementById("wishlist-popup").style.display = "none";
             }
 
-            function toggleWishlist(button) {
-                const messageDiv = document.getElementById("wishlist-message");
+            function toggleWishlist(event, button) {
+                event.preventDefault();
+                event.stopPropagation();
 
-                if (button.style.color === "red") {
+                const idBuku = button.getAttribute("data-id");
 
-                    button.style.color = "grey";
+                fetch("toggleWishlist.jsp?idBuku=" + idBuku)
+                        .then(response => response.text())
+                        .then(result => {
+                            const trimmed = result.trim();
 
-                    messageDiv.innerText = "Berhasil dihapus dari Wishlist!";
-                    messageDiv.style.display = "block";
-                } else {
+                            if (trimmed === "added") {
+                                button.classList.add("active");
+                                button.style.color = "red";
+                                showMessage("Ditambahkan ke wishlist");
+                            } else if (trimmed === "removed") {
+                                button.classList.remove("active");
+                                button.style.color = "grey";
+                                showMessage("Dihapus dari wishlist");
+                            } else {
+                                showMessage("Terjadi kesalahan: " + trimmed);
+                            }
+                        });
+            }
 
-                    button.style.color = "red";
+            function showMessage(msg) {
+                const div = document.getElementById("wishlist-message");
+                div.innerText = msg;
+                div.style.display = "block";
+                div.style.opacity = "1";
 
-                    messageDiv.innerText = "Berhasil menambahkan ke Wishlist!";
-                    messageDiv.style.display = "block";
-                }
+                setTimeout(() => {
+                    div.style.opacity = "0";
+                    setTimeout(() => {
+                        div.style.display = "none";
+                        div.style.opacity = "1";
+                    }, 300);
+                }, 1000);
             }
 
             const wishlistButtons = document.querySelectorAll('.wishlist-btn');
@@ -524,6 +619,18 @@
                 });
             });
 
+            function toggleClearButton() {
+                const input = document.getElementById('searchInput');
+                const clearBtn = document.getElementById('clearBtn');
+                clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+            }
+
+            function clearSearch() {
+                const input = document.getElementById('searchInput');
+                input.value = '';
+                document.getElementById('clearBtn').style.display = 'none';
+                input.focus();
+            }
 
         </script>
     </body>
