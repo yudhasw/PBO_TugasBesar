@@ -1,7 +1,7 @@
 <%-- 
-    Document   : pengguna
+    Document   : profilPengguna
     Created on : 28 May 2025, 20.03.06
-    Author     : GAMING 3
+    Author     : alif
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -18,12 +18,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Cache-Control" content="no-store"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
+                background-color: #F2F2F2;
             }
 
             a {
@@ -41,21 +43,21 @@
                 align-items: center;
             }
 
-            .nama-logo {
+            .nama-logo{
                 margin-left: 20px;
                 margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
 
-            .nama-logo h1 {
+            .nama-logo h1{
                 font-size: 20px;
                 margin: 20px;
                 text-decoration: none;
                 color: white;
             }
 
-            .nama-logo img {
+            .nama-logo img{
                 width: 60px;
                 height: 60px;
             }
@@ -64,14 +66,58 @@
                 flex-grow: 1;
                 display: flex;
                 justify-content: center;
+                position: relative;
+                margin-top: 20px;
+            }
+            .search-button {
+                background-color: #4A90E2;
+                border: 1px white solid;
+                color: white;
+                padding: 0 20px;
+                border-radius: 0 35px 35px 0;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
+
+            .search-button:hover {
+                background-color: #357ABD;
             }
 
             .search-input input {
-                width: 500px;
+                width: 450px;
                 padding: 15px;
                 border: none;
-                border-radius: 35px;
+                border-radius: 35px 0 0 35px;
+                font-size: 14px;
             }
+
+            #clearBtn {
+                position: absolute;
+                right: 80px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .cart-icon {
+                font-size: 22px;
+                color: white;
+                margin-right: 20px;
+                position: relative;
+                transition: color 0.3s ease;
+            }
+
+            .cart-icon:hover {
+                color: #FFD700;
+            }
+
+            .cart-icon i {
+                vertical-align: middle;
+            }
+
 
             .profil {
                 display: flex;
@@ -79,23 +125,20 @@
                 justify-content: space-between;
                 align-items: center;
                 margin-right: 20px;
-                margin-left: 40px;
             }
 
-            .profil h3 {
+            .profil h3{
                 text-align: center;
                 color: white;
                 margin-right: 10px;
             }
-
-            .profil-menu {
+            .profil-menu{
                 display: flex;
                 position: relative;
                 justify-content: space-between;
                 align-items: center;
                 padding: 10px;
             }
-
             .profil-menu img {
                 width: 50px;
                 height: 50px;
@@ -103,18 +146,22 @@
                 margin-left: 10px;
             }
 
-            .profil-menu:hover {
-                background-color: grey;
+            .profil-menu:hover{
+                background-color: #357ABD;
                 border-radius: 32px;
             }
 
-            #dropdown-icon {
+            #dropdown-icon{
                 text-align: center;
                 color: white;
                 padding: 10px 15px;
                 border-radius: 5px;
                 cursor: pointer;
                 transition: transform 0.3s ease;
+            }
+
+            #dropdown-icon.flip {
+                transform: rotate(180deg);
             }
 
             #dropdown-menu {
@@ -158,6 +205,7 @@
                 background-color: #F2F2F2;
                 padding: 20px;
                 border-radius: 16px;
+                background-color: white;
             }
 
             .profil-container img {
@@ -204,7 +252,6 @@
                 background-color: #007BFF;
             }
 
-            /* Popup Form Styling */
             .popup {
                 display: none;
                 position: fixed;
@@ -311,10 +358,29 @@
                 text-align: center;
                 font-weight: bold;
             }
+
+            .status-message {
+                display: block;
+                position: fixed;
+                top: 140px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #4A90E2;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 32px;
+                font-weight: bold;
+                font-size: 16px;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                opacity: 1;
+                animation: fadeOut 3s ease forwards;
+            }
         </style>
         <title>Profil Pengguna</title>
     </head>
     <body>
+        <div id="wishlist-message"></div>
         <div class="header">
             <a href="pengguna.jsp">
                 <div class="nama-logo">
@@ -324,8 +390,20 @@
             </a>
 
             <div class="search-input">
-                <input type="text" placeholder="Search">
+                <form action="searchResult.jsp" method="get" style="position: relative; display: flex;">
+                    <input type="text" name="query" id="searchInput" placeholder="Search" required oninput="toggleClearButton()">
+                    <span id="clearBtn" onclick="clearSearch()" style="display:none;">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
             </div>
+
+            <a href="keranjang.jsp" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -335,19 +413,20 @@
                 </div>
                 <div id="dropdown-menu" class="dropdown-content">
                     <a href="profilPengguna.jsp">Profil Pengguna</a>
-                    <a href="riwayat_transaksi.jsp">Riwayat Transaksi</a>
+                    <a href="riwayatTransaksi.jsp">Riwayat Transaksi</a>
                     <a href="wishlist.jsp">Wishlist</a>
                     <a href="logout.jsp">Keluar Akun</a>
                 </div>
             </div>
         </div>
 
+
         <h2>Profil Pengguna</h2>
 
         <div class="profil-container">
             <img src="imgBuku/user.png" alt="Profile Picture">
             <div class="profil-info">
-                <p><span>Username:</span> <%= username %> 
+                <p><span>Username:</span> <%= username%> 
                     <i class="fas fa-edit edit-icon" onclick="openPopup('editUsername')"></i></p>
                 <p><span>Password:</span> ******** 
                     <i class="fas fa-edit edit-icon" onclick="openPopup('editPassword')"></i></p>
@@ -355,10 +434,11 @@
         </div>
 
         <%
-            if (status != null) {
-                out.println("<div style='color: green;'>" + status + "</div>");
+            if (request.getParameter("status") != null) {
+                out.println("<div class='status-message'>" + request.getParameter("status") + "</div>");
             }
         %>
+
 
         <div id="editUsername" class="popup">
             <div class="popup-content">
@@ -418,6 +498,19 @@
             function closePopup(popupId) {
                 var popup = document.getElementById(popupId);
                 popup.style.display = "none";
+            }
+
+            function toggleClearButton() {
+                const input = document.getElementById('searchInput');
+                const clearBtn = document.getElementById('clearBtn');
+                clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+            }
+
+            function clearSearch() {
+                const input = document.getElementById('searchInput');
+                input.value = '';
+                document.getElementById('clearBtn').style.display = 'none';
+                input.focus();
             }
         </script>
     </body>
