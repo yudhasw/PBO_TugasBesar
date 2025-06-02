@@ -4,7 +4,10 @@
     Author     : alif
 --%>
 
+<%@page import="java.text.DecimalFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*, java.util.Set, java.util.HashSet" %>
+<%@ page import="classes.JDBC" %>
 <%
     String username = (String) session.getAttribute("username");
 
@@ -41,7 +44,6 @@
 
             .nama-logo{
                 margin-left: 20px;
-                margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
@@ -113,7 +115,6 @@
             .cart-icon i {
                 vertical-align: middle;
             }
-
 
             .profil {
                 display: flex;
@@ -246,7 +247,6 @@
                 background-color: #3b78c2;
             }
 
-            /* Status Badge */
             .badge {
                 display: inline-block;
                 padding: 6px 10px;
@@ -260,16 +260,13 @@
                 background-color: #28a745;
             }
 
-            .badge.failed {
-                background-color: #dc3545;
+            .badge.pending {
+                background-color: yellow;
             }
-
         </style>
         <title>E-TokoBuku</title>
     </head>
     <body>
-        <!-- Pesan status -->
-        <div id="wishlist-message" style="display: none; color: green; font-weight: bold;"></div>
         <div class="header">
             <a href="pengguna.jsp">
                 <div class="nama-logo">
@@ -289,9 +286,6 @@
                     </button>
                 </form>
             </div>
-            <a href="keranjang.jsp" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -307,6 +301,7 @@
                 </div>
             </div>
         </div>
+
         <h2>Riwayat Transaksi</h2>
         <div class="riwayat-transaksi">
             <div class="tabel-container">
@@ -314,43 +309,53 @@
                     <thead>
                         <tr>
                             <th>ID Transaksi</th>
-                            <th>Tanggal</th>
                             <th>Judul Buku</th>
-                            <th>Total Harga</th>
+                            <th>Harga</th>
+                            <th>Metode Pembayaran</th>
                             <th>Status</th>
                             <th>Detail</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <%
+                            try {
+                                JDBC db = new JDBC();
+
+                                ResultSet rsBukuSaya = db.getDataAll("SELECT id_pembelian, judul_buku, harga, metode_pembayaran FROM pembelian WHERE nama_pembeli = '" + username + "'");
+
+                                while (rsBukuSaya != null && rsBukuSaya.next()) {
+                                    String idTransaksi = rsBukuSaya.getString("id_pembelian");
+                                    String judulBuku = rsBukuSaya.getString("judul_buku");
+                                    double harga = rsBukuSaya.getDouble("harga");
+                                    String metodePembayaran = rsBukuSaya.getString("metode_pembayaran");
+
+                        %>
                         <tr>
-                            <td>001</td>
-                            <td>2025-05-29</td>
-                            <td>Judul Buku 1</td>
-                            <td>Rp100.000</td>
+                            <td><%= idTransaksi%></td>
+                            <td><%= judulBuku%></td>
+                            <td>Rp<%= new DecimalFormat("#,##0").format(harga) %></td>
+                            <td><%= metodePembayaran%></td>
                             <td><span class="badge success">Berhasil</span></td>
-                            <td><a href="transactionDetail.jsp?id=001" class="action-btn">Lihat</a></td>
+                            <td><a href="detailTransaksi.jsp?id=<%= idTransaksi%>" class="action-btn">Lihat</a></td>
                         </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>2025-05-28</td>
-                            <td>Judul Buku 2</td>
-                            <td>Rp50.000</td>
-                            <td><span class="badge success">Berhasil</span></td>
-                            <td><a href="transactionDetail.jsp?id=002" class="action-btn">Lihat</a></td>
-                        </tr>
-                        <tr>
-                            <td>003</td>
-                            <td>2025-05-27</td>
-                            <td>Judul Buku 3</td>
-                            <td>Rp150.000</td>
-                            <td><span class="badge failed">Gagal</span></td>
-                            <td><a href="transactionDetail.jsp?id=003" class="action-btn">Lihat</a></td>
-                        </tr>
+                        <%
+                                }
+
+                                if (rsBukuSaya != null) {
+                                    rsBukuSaya.close(); // Tutup ResultSet pembelian setelah selesai dibaca
+                                }
+                            } catch (Exception e) {
+                                out.println("<p style='color:red'>Terjadi error: " + e.getMessage() + "</p>");
+                                e.printStackTrace(new java.io.PrintWriter(out));
+                            }
+                        %>
                     </tbody>
                 </table>
             </div>
         </div>
+
         <script>
+            // Fungsi untuk menampilkan atau menyembunyikan dropdown menu
             function toggleDropdown() {
                 var dropdown = document.getElementById("dropdown-menu");
                 var icon = document.getElementById("dropdown-icon");
@@ -364,6 +369,7 @@
                 }
             }
 
+            // Fungsi untuk menutup dropdown jika klik di luar dropdown
             window.onclick = function (event) {
                 var dropdown = document.getElementById("dropdown-menu");
                 var icon = document.getElementById("dropdown-icon");
@@ -376,18 +382,65 @@
                 }
             };
 
+            // Fungsi untuk menampilkan tombol bersih pencarian
             function toggleClearButton() {
                 const input = document.getElementById('searchInput');
                 const clearBtn = document.getElementById('clearBtn');
                 clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
             }
 
+            // Fungsi untuk membersihkan input pencarian
             function clearSearch() {
                 const input = document.getElementById('searchInput');
                 input.value = '';
                 document.getElementById('clearBtn').style.display = 'none';
                 input.focus();
             }
+
+            // Fungsi untuk memperbarui tombol scroll
+            const leftButton = document.querySelector('.scroll-button.left');
+            const rightButton = document.querySelector('.scroll-button.right');
+            const booksContainer = document.querySelector('.rekomendasi-buku');
+
+            function updateScrollButtons() {
+                const scrollLeft = booksContainer.scrollLeft;
+                const maxScrollLeft = booksContainer.scrollWidth - booksContainer.clientWidth;
+
+                if (scrollLeft <= 0) {
+                    leftButton.style.display = 'none'; // Sembunyikan tombol kiri jika sudah di kiri
+                } else {
+                    leftButton.style.display = 'block'; // Tampilkan tombol kiri jika tidak di kiri
+                }
+
+                if (scrollLeft >= maxScrollLeft) {
+                    rightButton.style.display = 'none'; // Sembunyikan tombol kanan jika sudah di kanan
+                } else {
+                    rightButton.style.display = 'block'; // Tampilkan tombol kanan jika tidak di kanan
+                }
+            }
+
+            // Perbarui tombol scroll setiap kali pengguna melakukan scroll
+            updateScrollButtons();
+
+            booksContainer.addEventListener('scroll', updateScrollButtons);
+
+            // Tombol scroll kiri
+            leftButton.addEventListener('click', () => {
+                booksContainer.scrollBy({
+                    left: -250, // Sesuaikan jumlah scroll sesuai kebutuhan
+                    behavior: 'smooth'
+                });
+            });
+
+            // Tombol scroll kanan
+            rightButton.addEventListener('click', () => {
+                booksContainer.scrollBy({
+                    left: 250, // Sesuaikan jumlah scroll sesuai kebutuhan
+                    behavior: 'smooth'
+                });
+            });
         </script>
+
+
     </body>
 </html>
