@@ -4,17 +4,19 @@
     Author     : alif
 --%>
 
+<%@page import="java.text.DecimalFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="classes.JDBC" %>
 <%
     String username = (String) session.getAttribute("username");
-
-    if (username == null) {
-        response.sendRedirect("penggunaGuest.jsp");
-        return;
-    }
     String keyword = request.getParameter("query");
+
+    // Jika pengguna belum login, arahkan ke login.jsp
+    if (username == null) {
+        response.sendRedirect("login.jsp");
+        return;  // Pastikan eksekusi berhenti setelah redirect
+    }
 %>
 <html>
     <head>
@@ -44,7 +46,6 @@
 
             .nama-logo{
                 margin-left: 20px;
-                margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
@@ -422,9 +423,10 @@
                     </button>
                 </form>
             </div>
-            <a href="keranjang.jsp" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
+
+            <!--            <a href="keranjang.jsp" class="cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>-->
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -448,11 +450,11 @@
                 try {
                     JDBC db = new JDBC();
                     ResultSet rs = db.getDataAll(
-                            "SELECT id, penulis, judul, harga FROM buku WHERE judul LIKE '%" + keyword + "%' OR penulis LIKE '%" + keyword + "%'"
+                            "SELECT * FROM buku WHERE judul LIKE '%" + keyword + "%' OR penulis LIKE '%" + keyword + "%'"
                     );
 
                     while (rs != null && rs.next()) {
-                        String idBuku = rs.getString("id");
+                        String idBuku = rs.getString("id_buku");
                         ResultSet rsWishlist = db.getDataAll("SELECT * FROM wishlist WHERE idPengguna=(SELECT id FROM pengguna WHERE username='" + username + "') AND idBuku='" + idBuku + "'");
                         boolean isInWishlist = rsWishlist.next();
                         rsWishlist.close();
@@ -461,11 +463,11 @@
                 <button class="wishlist-btn  <%= isInWishlist ? "active" : ""%>"" data-id="<%= idBuku%>" onclick="toggleWishlist(event, this)">
                     <i class="fas fa-heart"></i>
                 </button>
-                <a href="detailBuku.jsp?id=<%= idBuku%>">
+                <a href="BukuController?id=<%= idBuku%>">
                     <img src="imgBuku/<%= idBuku%>.jpg" alt="<%= rs.getString("judul")%>">
                     <p id="penulis"><%= rs.getString("penulis")%></p>
                     <p id="judul"><%= rs.getString("judul")%></p>
-                    <p id="harga"><%= rs.getString("harga")%></p>
+                    <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga")) %></p>
                 </a>
             </div>
             <%
