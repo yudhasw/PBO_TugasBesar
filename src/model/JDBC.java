@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package classes;
+import java.util.*;
 import java.sql.*;
 
 /**
@@ -16,23 +17,38 @@ public class JDBC {
     private String message;
     
     public void connect() {
+//        String dbname = "tokoBukuDB";
+//        String username = "martabak";
+//        String password = "PasswordDiGate2";
         String dbname = "toko_buku";
         String username = "root";
         String password = "";
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"
-                    + dbname, username, password);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ dbname, username, password);
+//            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            String connectionUrl = "jdbc:sqlserver://pbofinalproject.database.windows.net:1433;" +
+//                       "database=" + dbname + ";" +
+//                       "user=" + username + ";" +
+//                       "password=" + password + ";" + 
+//                       "encrypt=true;" +
+//                       "trustServerCertificate=false;" +
+//                       "loginTimeout=30;";
+//
+//            con = DriverManager.getConnection(connectionUrl);
+
             stmt = con.createStatement();
             isConnected = true;
-            message = "DB connected";
+            message = "MESSAGE: DB connected";
         } catch(Exception e) {
             isConnected = false;
-            message = e.getMessage();
-        } 
+            message = "MESSAGE: Exception: "+e.getMessage();
+        } finally {
+            System.out.println(message);
+        }
     }
     
-    private void disconnect() {
+    public void disconnect() {
         try {
             stmt.close();
             con.close();
@@ -44,10 +60,10 @@ public class JDBC {
     public String getData(String query, String namaKolom) {
         String dataDariDB = null;
         try {
-            connect();
+            connect(); // pastikan ini juga membuat stmt
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
-                dataDariDB = rs.getString(namaKolom).trim();
+                dataDariDB = rs.getString(namaKolom).trim(); // hindari newline
             }
         } catch (Exception e) {
             return "Exception: " + e.getMessage();
@@ -55,6 +71,17 @@ public class JDBC {
             disconnect();
         }
         return dataDariDB;
+    }
+    
+    public ResultSet getDataAll(String query) {
+        ResultSet rs = null;
+        try {
+            connect(); // pastikan ini juga membuat stmt
+            rs = stmt.executeQuery(query);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+        return rs;
     }
     
     public void runQuery(String query) { 
@@ -67,5 +94,28 @@ public class JDBC {
         } finally {
             disconnect();
         }
+    }
+    
+    public List<Map<String, String>> getForumData() {
+        List<Map<String, String>> data = new ArrayList<>();
+        try {
+            connect();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM forum_review");
+            while (rs.next()) {
+                Map<String, String> row = new HashMap<>();
+                row.put("kategori", rs.getString("kategori"));
+                row.put("judul_forum", rs.getString("judul_forum"));
+                row.put("deskripsi", rs.getString("deskripsi"));
+                row.put("username_pengirim", rs.getString("username_pengirim"));
+                row.put("waktu", rs.getString("waktu"));
+                row.put("id_post", rs.getString("id_post"));
+                data.add(row);
+            }
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        } finally {
+            disconnect();
+        }
+        return data;
     }
 }
