@@ -4,9 +4,16 @@
     Author     : alif
 --%>
 
+<%-- 
+    Document   : pengguna
+    Created on : 22 May 2025, 19.04.55
+    Author     : GAMING 3
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="classes.JDBC" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%
     String username = (String) session.getAttribute("username");
 
@@ -44,7 +51,6 @@
 
             .nama-logo{
                 margin-left: 20px;
-                margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
@@ -348,7 +354,7 @@
                 justify-content: space-around;
                 margin: 0px 40px 40px 40px;
                 padding: 20px;
-                background-color: #F2F2F2;
+                background-color: white;
                 border: none;
                 border-radius: 32px;
             }
@@ -421,9 +427,10 @@
                     </button>
                 </form>
             </div>
-            <a href="keranjang.jsp" class="cart-icon">
+            
+<!--            <a href="keranjang.jsp" class="cart-icon">
                 <i class="fas fa-shopping-cart"></i>
-            </a>
+            </a>-->
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -448,10 +455,10 @@
             <%
                 try {
                     JDBC db = new JDBC();
-                    ResultSet rs = db.getDataAll("SELECT id, penulis, judul, harga FROM buku");
+                    ResultSet rs = db.getDataAll("SELECT * FROM buku");
 
                     while (rs != null && rs.next()) {
-                        String idBuku = rs.getString("id");
+                        String idBuku = rs.getString("id_buku");
                         ResultSet rsWishlist = db.getDataAll("SELECT * FROM wishlist WHERE idPengguna=(SELECT id FROM pengguna WHERE username='" + username + "') AND idBuku='" + idBuku + "'");
                         boolean isInWishlist = rsWishlist.next();
                         rsWishlist.close();
@@ -460,11 +467,11 @@
                 <button class="wishlist-btn <%= isInWishlist ? "active" : ""%>" data-id="<%= idBuku%>" onclick="toggleWishlist(event, this)">
                     <i class="fas fa-heart"></i>
                 </button>
-                <a href="detailBuku.jsp?id=<%= idBuku%>">
-                    <img src="https://i.pinimg.com/736x/d0/c6/41/d0c641b5e8f7874db6eb2d9a8bbc775e.jpg" alt="<%= rs.getString("judul")%>">
+                <a href="BukuController?id=<%= idBuku%>">
+                    <img src="<%= rs.getString("gambar")%>" alt="<%= rs.getString("judul")%>">
                     <p id="penulis"><%= rs.getString("penulis")%></p>
                     <p id="judul"><%= rs.getString("judul")%></p>
-                    <p id="harga"><%= rs.getString("harga")%></p>
+                    <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga")) %></p>
                 </a>
             </div>
             <%
@@ -483,7 +490,7 @@
 
         <div class="fitur">
 
-            <a href="url">
+            <a href="bukuSaya.jsp">
                 <div class="opsi">
                     <img src="src" />
                     <p>Buku Saya</p>
