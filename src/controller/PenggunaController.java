@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package servlets;
 
 import classes.Pengguna;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,10 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- *
- * @author alif
- */
 @WebServlet(name = "PenggunaController", urlPatterns = {"/PenggunaController"})
 public class PenggunaController extends HttpServlet {
 
@@ -102,4 +95,3 @@ public class PenggunaController extends HttpServlet {
         return "Servlet untuk mengatur perubahan username, password, dan wishlist pengguna";
     }
 }
-
