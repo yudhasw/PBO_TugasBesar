@@ -4,6 +4,7 @@
     Author     : alif
 --%>
 
+<%@page import="java.text.DecimalFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="classes.JDBC" %>
 <%@ page import="java.sql.ResultSet" %>
@@ -44,7 +45,6 @@
 
             .nama-logo {
                 margin-left: 20px;
-                margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
@@ -364,9 +364,10 @@
                     </button>
                 </form>
             </div>
-            <a href="keranjang.jsp" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
+
+            <!--            <a href="keranjang.jsp" class="cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>-->
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -390,26 +391,34 @@
             <%
                 try {
                     JDBC db = new JDBC();
+                    // Get the id of the user
+                    ResultSet rsUser = db.getDataAll("SELECT id FROM pengguna WHERE username = '" + username + "'");
+                    String userId = "";
+                    if (rsUser != null && rsUser.next()) {
+                        userId = rsUser.getString("id");
+                    }
+                    rsUser.close();
+
+                    // Get books in the wishlist for the logged-in user
                     ResultSet rs = db.getDataAll(
-                            "SELECT b.id, b.penulis, b.judul, b.harga "
+                            "SELECT b.id_buku, b.judul, b.penulis, b.harga, b.gambar "
                             + "FROM wishlist w "
-                            + "JOIN buku b ON w.idBuku = b.id "
-                            + "JOIN pengguna p ON p.id = w.idPengguna "
-                            + "WHERE p.username = '" + username + "'"
+                            + "JOIN buku b ON w.idBuku = b.id_buku "
+                            + "WHERE w.idPengguna = '" + userId + "'"
                     );
 
                     while (rs != null && rs.next()) {
-                        String idBuku = rs.getString("id");
+                        String idBuku = rs.getString("id_buku");
             %>
             <div class="book-item">
                 <button class="wishlist-btn" data-id="<%= idBuku%>" onclick="toggleWishlist(event, this)">
                     <i class="fas fa-heart"></i>
                 </button>
-                <a href="detailBuku.jsp?id=<%= idBuku%>">
-                    <img src="imgBuku/<%= idBuku%>.jpg" alt="<%= rs.getString("judul")%>">
+                <a href="BukuController?id=<%= idBuku%>">
+                    <img src="imgBuku/<%= rs.getString("gambar")%>" alt="<%= rs.getString("judul")%>">
                     <p id="penulis"><%= rs.getString("penulis")%></p>
                     <p id="judul"><%= rs.getString("judul")%></p>
-                    <p id="harga"><%= rs.getString("harga")%></p>
+                    <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga")) %></p>
                 </a>
             </div>
             <%
