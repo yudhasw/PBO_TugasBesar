@@ -1,3 +1,9 @@
+<%-- 
+    Document   : login
+    Created on : May 22, 2025, 5:07:51 PM
+    Author     : yudha
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String status = (String) request.getAttribute("status");
@@ -149,15 +155,16 @@
             <% if (isRegisterFailed) { %>
                 <div class="error-message"><%= status %></div>
             <% } %>
-
-            <form action="RegisterController" method="post">
+            
+            <form action="AksesWebController" method="post">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Masukkan username" required class="<%= isRegisterFailed ? "input-error" : "" %>" >
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Masukkan password" required class="<%= isRegisterFailed ? "input-error" : "" %>">
                 <label for="confirm-password">Confirm Password</label>
-                <input type="confirm-password" id="confirm-password" name="confirm-password" placeholder="Masukan ulang password" required class="<%= isRegisterFailed ? "input-error" : "" %>">
-                <button type="submit">Register</button>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Masukan ulang password" required class="<%= isRegisterFailed ? "input-error" : "" %>">
+                <button type="submit">Register</button><input type="hidden" name="page" value="register">
+                <input type="hidden" name="page" value="register">
             </form>
 
             <div class="footer-note">
@@ -167,3 +174,4 @@
     </div>
 </body>
 </html>
+
