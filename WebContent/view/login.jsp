@@ -1,3 +1,9 @@
+<%-- 
+    Document   : login
+    Created on : May 22, 2025, 5:07:51 PM
+    Author     : yudha
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String status = (String) request.getAttribute("status");
@@ -150,12 +156,15 @@
                 <div class="error-message">Username atau password salah!</div>
             <% } %>
 
-            <form action="LoginController" method="post">
+            
+            <form action="AksesWebController" method="post">
+                <input type="hidden" name="page" value="login">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Masukkan username" required class="<%= isLoginFailed ? "input-error" : "" %>" >
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Masukkan password" required class="<%= isLoginFailed ? "input-error" : "" %>">
                 <button type="submit">Login</button>
+                
             </form>
 
             <div class="footer-note">
