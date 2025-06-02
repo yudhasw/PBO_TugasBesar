@@ -95,6 +95,17 @@ public class JDBC {
             disconnect();
         }
     }
+
+    public Connection getConnection() {
+        if (con == null) {
+            connect();
+        }
+        return con;
+    }
+
+    public void close() {
+        disconnect();
+    }
     
     public List<Map<String, String>> getForumData() {
         List<Map<String, String>> data = new ArrayList<>();
