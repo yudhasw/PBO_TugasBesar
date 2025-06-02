@@ -4,12 +4,6 @@
     Author     : alif
 --%>
 
-<%-- 
-    Document   : pengguna
-    Created on : 22 May 2025, 19.04.55
-    Author     : GAMING 3
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="classes.JDBC" %>
