@@ -1,11 +1,13 @@
 <%@page import="java.sql.ResultSet"%>
 <%@page import="classes.JDBC"%>
+<%@page import="java.sql.SQLException"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8" />
-        <title>Admin Dashboard</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+        <meta charset="UTF-8">
+        <title>Admin - Penjualan Buku</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
             body {
                 margin: 0;
@@ -167,10 +169,26 @@
                 background-color: white;
                 padding: 20px;
             }
+
+            .delete-icon {
+                cursor: pointer;
+                color: #e74c3c;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+            }
+
         </style>
     </head>
     <body>
-
         <!-- Toggle Button di luar sidebar -->
         <span class="toggle-button" onclick="toggleSidebar()">&#9776;</span>
 
@@ -210,53 +228,51 @@
             <div class="content" id="content">
 
                 <div class="user-list">
-                    <h2>DAFTAR PENJUALAN</h2>
+                    <h1>Daftar Buku Terjual</h1>
                     <table>
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Nama Pembeli</th>
-                                <th>Nama Buku</th>
-                                <th>Penulis</th>
-                                <th>Genre</th>
-                                <th>Harga</th>
-                                <th>Status</th>
+                                <th>ID Buku</th>
+                                <th>Judul Buku</th>
+                                <th>Harga Buku</th>
+                                <th>Jumlah Terjual</th>
+                                <th>Total Penjualan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <%
-                                    JDBC db = new JDBC();
-                                    ResultSet rs = db.getData("SELECT * FROM buku");
-                                    if (rs != null) {
-                                        while (rs.next()) {
-                                %>
-                            </tr>
-                            <tr>
-                                <td><%= rs.getString("id")%></td>
-                                <td><%= rs.getString("nama_pembeli")%></td>
-                                <td><%= rs.getString("nama_buku")%></td>
-                                <td><%= rs.getString("penulis_buku")%></td>
-                                <td><%= rs.getString("genre")%></td>
-                                <td><%= rs.getDouble("harga")%></td>
-                                <td><%= rs.getString("status")%></td>
-                            </tr>
                             <%
-                                    }
-                                }
+                                JDBC db = new JDBC();
+                                ResultSet rs = db.getData("SELECT * FROM buku ORDER BY (harga * jumlah_terjual) DESC");
+
+                                double totalSeluruhPenjualan = 0;
+
+                                while (rs != null && rs.next()) {
+                                    int id = rs.getInt("id");
+                                    String namaBuku = rs.getString("nama_buku");
+                                    double harga = rs.getDouble("harga");
+                                    int jumlah = rs.getInt("jumlah_terjual");
+                                    double total = harga * jumlah;
+                                    totalSeluruhPenjualan += total;
                             %>
+                        <tr>
+                            <td><%= id%></td>
+                            <td><%= namaBuku%></td>
+                            <td>Rp <%= String.format("%,.0f", harga)%></td>
+                            <td><%= jumlah%></td>
+                            <td>Rp <%= String.format("%,.0f", total)%></td>
+                        </tr>
+                        <% }%>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
+                    <script>
+                        function toggleSidebar() {
+                            const sidebar = document.getElementById('sidebar');
+                            sidebar.classList.toggle('hidden');
+                            sidebar.style.transform = sidebar.classList.contains('hidden') ? 'translateX(-100%)' : 'translateX(0)';
+                        }
+                    </script>
 
-        <script>
-            function toggleSidebar() {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.toggle('hidden');
-                sidebar.style.transform = sidebar.classList.contains('hidden') ? 'translateX(-100%)' : 'translateX(0)';
-            }
-        </script>
-    </body>
-</html>
+                    <th colspan="4" style="text-align:right;">Total Seluruh Penjualan:</th>
+                    <th>Rp <%= String.format("%,.0f", totalSeluruhPenjualan)%></th>
+                    </body>
+                    </html>
