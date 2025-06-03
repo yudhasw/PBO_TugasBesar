@@ -60,24 +60,4 @@ public class Pengguna {
         }
         return statusR;
     }
-    
-    public void BeliBuku(){
-        
-    }
-    
-    public void CariBuku(){
-        
-    }
-    
-    public void RiwayatPembelian(){
-        
-    }
-    
-    public void DaftarBukuDimiliki(){
-        
-    }
-    
-    public void ReviewBuku(){
-        
-    }
 }
