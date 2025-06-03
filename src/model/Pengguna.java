@@ -2,13 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package src.model;
+package classes;
 
 /**
  *
- * @author GAMING 3
+ * @author alif
  */
-
 import java.sql.*;
 
 public class Pengguna {
@@ -20,6 +19,11 @@ public class Pengguna {
         this.username = username;
         this.password = password;
     }
+
+    public Pengguna() {
+    }
+
+    ;
 
     public String updateUsername(String newUsername) {
         String statusR = "Update username berhasil";
@@ -43,21 +47,50 @@ public class Pengguna {
     }
 
     public String updatePassword(String newPassword) {
-        String statusR = "Update password berhasil";
+        String statusR = "";
+
         try {
-            if (newPassword != null && !newPassword.isEmpty()) {
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                String sanitizedPassword = newPassword.replace("'", "''");
+
                 JDBC db = new JDBC();
-                String updateQuery = "UPDATE pengguna SET password = '" + newPassword + "' WHERE username = '" + this.username + "'";
+                String updateQuery = "UPDATE pengguna SET password = '" + sanitizedPassword + "' WHERE username = '" + this.username + "'";
                 db.runQuery(updateQuery);
 
-                statusR = "Password berhasil diperbarui.";
                 this.password = newPassword;
+                statusR = "Password berhasil diperbarui.";
             } else {
                 statusR = "Password baru tidak valid.";
             }
         } catch (Exception e) {
             statusR = "Terjadi kesalahan: " + e.getMessage();
         }
+
         return statusR;
     }
+
+    public String getPasswordFromDB() {
+        String realPassword = null;
+        try {
+            JDBC db = new JDBC();
+            realPassword = db.getData("SELECT password FROM pengguna WHERE username = '" + this.username + "'", "password");
+        } catch (Exception e) {
+            System.out.println("Error ambil password dari DB: " + e.getMessage());
+        }
+        return realPassword;
+    }
+
+    public void Wishlist(String idPengguna, String idBuku, String statusWishlist) {
+        try {
+            JDBC db = new JDBC();
+            if ("tambah".equals(statusWishlist)) {
+                db.runQuery("INSERT INTO wishlist(idPengguna, idBuku) VALUES ('" + idPengguna + "','" + idBuku + "');");
+            } else if ("hapus".equals(statusWishlist)) {
+                db.runQuery("DELETE FROM wishlist WHERE idPengguna='" + idPengguna + "' AND idBuku='" + idBuku + "';");
+            }
+        } catch (Exception e) {
+            System.out.println("Exception (Wishlist): " + e.getMessage());
+        }
+    }
+
 }
