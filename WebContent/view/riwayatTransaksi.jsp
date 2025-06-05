@@ -253,15 +253,19 @@
                 border-radius: 10px;
                 font-size: 12px;
                 font-weight: bold;
-                color: white;
             }
 
             .badge.success {
                 background-color: #28a745;
+                color: white;
             }
 
             .badge.pending {
                 background-color: yellow;
+            }
+            
+            .badge.failed {
+                background-color: lightcoral;
             }
         </style>
         <title>E-TokoBuku</title>
@@ -294,7 +298,7 @@
                     <img src="imgBuku/user.png" id="profile-img" onclick="toggleDropdown()"/>
                 </div>
                 <div id="dropdown-menu" class="dropdown-content">
-                    <a href="profilPengguna.jsp">Profil Pengguna</a>
+                    <a href="profilpengguna.jsp">Profil Pengguna</a>
                     <a href="riwayatTransaksi.jsp">Riwayat Transaksi</a>
                     <a href="wishlist.jsp">Wishlist</a>
                     <a href="logout.jsp">Keluar Akun</a>
@@ -321,13 +325,14 @@
                             try {
                                 JDBC db = new JDBC();
 
-                                ResultSet rsBukuSaya = db.getDataAll("SELECT id_pembelian, judul_buku, harga, metode_pembayaran FROM pembelian WHERE nama_pembeli = '" + username + "'");
+                                ResultSet rsBukuSaya = db.getDataAll("SELECT id_pembelian, judul_buku, harga, metode_pembayaran, status FROM pembelian WHERE nama_pembeli = '" + username + "'");
 
                                 while (rsBukuSaya != null && rsBukuSaya.next()) {
                                     String idTransaksi = rsBukuSaya.getString("id_pembelian");
                                     String judulBuku = rsBukuSaya.getString("judul_buku");
                                     double harga = rsBukuSaya.getDouble("harga");
                                     String metodePembayaran = rsBukuSaya.getString("metode_pembayaran");
+                                    String status = rsBukuSaya.getString("status");
 
                         %>
                         <tr>
@@ -335,8 +340,22 @@
                             <td><%= judulBuku%></td>
                             <td>Rp<%= new DecimalFormat("#,##0").format(harga) %></td>
                             <td><%= metodePembayaran%></td>
+                        <% 
+                                    if ("lunas".equals(status)){
+                        %>
                             <td><span class="badge success">Berhasil</span></td>
-                            <td><a href="detailTransaksi.jsp?id=<%= idTransaksi%>" class="action-btn">Lihat</a></td>
+                        <% 
+                            } else if ("pending".equals(status)) {
+                        %>
+                            <td><span class="badge pending">Pending</span></td>
+                        <% 
+                            } else if ("gagal".equals(status)) {
+                        %>
+                            <td><span class="badge failed">Gagal</span></td>
+                        <% 
+                            }
+                        %>
+                            <td><a href="detailTransaksi.jsp?id=<%= idTransaksi%>&username=<%= username%>" class="action-btn">Lihat</a></td>
                         </tr>
                         <%
                                 }
