@@ -9,6 +9,7 @@ package classes;
  * @author alif
  */
 import java.sql.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Pengguna {
 
@@ -48,16 +49,16 @@ public class Pengguna {
 
     public String updatePassword(String newPassword) {
         String statusR = "";
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
         try {
-            if (newPassword != null && !newPassword.trim().isEmpty()) {
-                String sanitizedPassword = newPassword.replace("'", "''");
+            if (hashedPassword != null && !hashedPassword.trim().isEmpty()) {
 
                 JDBC db = new JDBC();
-                String updateQuery = "UPDATE pengguna SET password = '" + sanitizedPassword + "' WHERE username = '" + this.username + "'";
+                String updateQuery = "UPDATE pengguna SET password = '" + hashedPassword + "' WHERE username = '" + this.username + "'";
                 db.runQuery(updateQuery);
 
-                this.password = newPassword;
+                this.password = hashedPassword;
                 statusR = "Password berhasil diperbarui.";
             } else {
                 statusR = "Password baru tidak valid.";
@@ -91,6 +92,22 @@ public class Pengguna {
         } catch (Exception e) {
             System.out.println("Exception (Wishlist): " + e.getMessage());
         }
+    }
+
+    public void BeliBuku() {
+
+    }
+
+    public void RiwayatPembelian() {
+
+    }
+
+    public void DaftarBukuDimiliki() {
+
+    }
+
+    public void ReviewBuku() {
+
     }
 
 }
