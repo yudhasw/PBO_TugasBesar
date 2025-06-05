@@ -19,7 +19,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -172,7 +172,7 @@
                 min-width: 220px;
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 border-radius: 8px;
-                z-index: 1;
+                z-index: 999;
                 padding: 10px 0;
             }
 
@@ -421,10 +421,8 @@
                     </button>
                 </form>
             </div>
-            
-<!--            <a href="keranjang.jsp" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
-            </a>-->
+
+
 
             <div class="profil">
                 <h3><%= username%></h3>
@@ -433,7 +431,7 @@
                     <img src="imgBuku/user.png" id="profile-img" onclick="toggleDropdown()"/>
                 </div>
                 <div id="dropdown-menu" class="dropdown-content">
-                    <a href="profilPengguna.jsp">Profil Pengguna</a>
+                    <a href="profilpengguna.jsp">Profil Pengguna</a>
                     <a href="riwayatTransaksi.jsp">Riwayat Transaksi</a>
                     <a href="wishlist.jsp">Wishlist</a>
                     <a href="logout.jsp">Keluar Akun</a>
@@ -453,7 +451,7 @@
 
                     while (rs != null && rs.next()) {
                         String idBuku = rs.getString("id_buku");
-                        ResultSet rsWishlist = db.getDataAll("SELECT * FROM wishlist WHERE idPengguna=(SELECT id FROM pengguna WHERE username='" + username + "') AND idBuku='" + idBuku + "'");
+                        ResultSet rsWishlist = db.getDataAll("SELECT * FROM wishlist WHERE idPengguna=(SELECT id FROM pengguna WHERE username='" + username + "') AND idBuku=" + idBuku);
                         boolean isInWishlist = rsWishlist.next();
                         rsWishlist.close();
             %>
@@ -462,10 +460,10 @@
                     <i class="fas fa-heart"></i>
                 </button>
                 <a href="BukuController?id=<%= idBuku%>">
-                    <img src="<%= rs.getString("gambar")%>" alt="<%= rs.getString("judul")%>">
+                    <img src="imgBuku/coverBuku.jpg" alt="<%= rs.getString("judul")%>">
                     <p id="penulis"><%= rs.getString("penulis")%></p>
                     <p id="judul"><%= rs.getString("judul")%></p>
-                    <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga")) %></p>
+                    <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga"))%></p>
                 </a>
             </div>
             <%
@@ -486,18 +484,24 @@
 
             <a href="bukuSaya.jsp">
                 <div class="opsi">
-                    <img src="src" />
+                    <img src="imgBuku/bukuSaya.jpg" />
                     <p>Buku Saya</p>
                 </div>
             </a>
 
-            <a href="url">
+            <a href="Review.jsp">
                 <div class="opsi">
-                    <img src="src" />
+                    <img src="imgBuku/forum.jpg" />
                     <p>Review Buku</p>
                 </div>
             </a>
 
+            <a href="riwayatTransaksi.jsp">
+                <div class="opsi">
+                    <img src="imgBuku/riwayat.jpg" />
+                    <p>Riwayat Transaksi</p>
+                </div>
+            </a>
         </div>
 
         <script>
