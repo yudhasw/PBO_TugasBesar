@@ -1,5 +1,5 @@
 <%-- 
-    Document   : profilPengguna
+    Document   : profilpengguna
     Created on : 28 May 2025, 20.03.06
     Author     : alif
 --%>
@@ -8,7 +8,7 @@
 <%
     String username = (String) session.getAttribute("username");
     String password = (String) session.getAttribute("password");
-
+    
     if (username == null) {
         response.sendRedirect("penggunaGuest.jsp");
         return;
@@ -45,7 +45,6 @@
 
             .nama-logo{
                 margin-left: 20px;
-                margin-right: 40px;
                 display: flex;
                 justify-content: space-around;
             }
@@ -401,10 +400,6 @@
                 </form>
             </div>
 
-            <a href="keranjang.jsp" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
-
             <div class="profil">
                 <h3><%= username%></h3>
                 <div class="profil-menu">
@@ -412,7 +407,7 @@
                     <img src="imgBuku/user.png" id="profile-img" onclick="toggleDropdown()"/>
                 </div>
                 <div id="dropdown-menu" class="dropdown-content">
-                    <a href="profilPengguna.jsp">Profil Pengguna</a>
+                    <a href="profilpengguna.jsp">Profil Pengguna</a>
                     <a href="riwayatTransaksi.jsp">Riwayat Transaksi</a>
                     <a href="wishlist.jsp">Wishlist</a>
                     <a href="logout.jsp">Keluar Akun</a>
