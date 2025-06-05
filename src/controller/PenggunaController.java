@@ -1,97 +1,113 @@
-package servlets;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package classes;
 
-import classes.Pengguna;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+/**
+ *
+ * @author alif
+ */
+import java.sql.*;
+import org.mindrot.jbcrypt.BCrypt;
 
-@WebServlet(name = "PenggunaController", urlPatterns = {"/PenggunaController"})
-public class PenggunaController extends HttpServlet {
+public class Pengguna {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private String username;
+    private String password;
 
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
+    public Pengguna(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
-        String username = (String) request.getSession().getAttribute("username");
-        String password = (String) request.getSession().getAttribute("password");
+    public Pengguna() {
+    }
 
-        String newUsername = request.getParameter("newUsername");
-        String oldPassword = request.getParameter("oldPassword");
-        String newPassword = request.getParameter("newPassword");
-        String confirmPassword = request.getParameter("newPasswordConfirm");
+    ;
 
-        String status = null;
+    public String updateUsername(String newUsername) {
+        String statusR = "Update username berhasil";
+        try {
+            JDBC db = new JDBC();
+            String cekUsername = db.getData("SELECT username FROM pengguna WHERE username ='" + newUsername + "';", "username");
 
-        String statusWishlist = request.getParameter("statusWishlist");
+            if (cekUsername == null) {
+                String updateQuery = "UPDATE pengguna SET username = '" + newUsername + "' WHERE username = '" + this.username + "'";
+                db.runQuery(updateQuery);
 
-        if (statusWishlist != null && !statusWishlist.isEmpty() && !statusWishlist.isBlank()) {
-            String idPengguna = request.getParameter("idPengguna");
-            String idBuku = request.getParameter("idBuku");
-
-            if (idPengguna != null && idBuku != null) {
-                Pengguna wishlist = new Pengguna();
-                wishlist.Wishlist(idPengguna, idBuku, statusWishlist);
-            }
-        }
-
-        if (newUsername != null && !newUsername.isEmpty()) {
-            Pengguna pengguna = new Pengguna(username, password);
-            status = pengguna.updateUsername(newUsername);
-
-            if ("Username berhasil diperbarui.".equals(status)) {
-                request.getSession().setAttribute("username", newUsername); // update session
-                username = newUsername; // sync ke bawah
-            }
-        }
-        
-        if (oldPassword != null && newPassword != null && confirmPassword != null) {
-            Pengguna pengguna = new Pengguna(username, null);
-            String realPassword = pengguna.getPasswordFromDB();
-
-            if (realPassword == null) {
-                status = "Gagal memverifikasi password lama.";
-            } else if (!oldPassword.equals(realPassword)) {
-                status = "Password lama yang Anda masukkan salah";
-            } else if (!newPassword.equals(confirmPassword)) {
-                status = "Password baru dan konfirmasi tidak cocok";
+                statusR = "Username berhasil diperbarui.";
+                this.username = newUsername;
             } else {
-                status = pengguna.updatePassword(newPassword);
-                if ("Password berhasil diperbarui.".equals(status)) {
-                    request.getSession().setAttribute("password", newPassword);
-                }
+                statusR = "Username sudah terdaftar.";
             }
+        } catch (Exception e) {
+            statusR = "Terjadi kesalahan: " + e.getMessage();
+        }
+        return statusR;
+    }
+
+    public String updatePassword(String newPassword) {
+        String statusR = "";
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+        try {
+            if (hashedPassword != null && !hashedPassword.trim().isEmpty()) {
+
+                JDBC db = new JDBC();
+                String updateQuery = "UPDATE pengguna SET password = '" + hashedPassword + "' WHERE username = '" + this.username + "'";
+                db.runQuery(updateQuery);
+
+                this.password = hashedPassword;
+                statusR = "Password berhasil diperbarui.";
+            } else {
+                statusR = "Password baru tidak valid.";
+            }
+        } catch (Exception e) {
+            statusR = "Terjadi kesalahan: " + e.getMessage();
         }
 
-        if (status != null && !status.isEmpty()) {
-            response.sendRedirect("profilPengguna.jsp?status=" + URLEncoder.encode(status, StandardCharsets.UTF_8.toString()));
-        } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("profilPengguna.jsp");
-            dispatcher.forward(request, response);
+        return statusR;
+    }
+
+    public String getPasswordFromDB() {
+        String realPassword = null;
+        try {
+            JDBC db = new JDBC();
+            realPassword = db.getData("SELECT password FROM pengguna WHERE username = '" + this.username + "'", "password");
+        } catch (Exception e) {
+            System.out.println("Error ambil password dari DB: " + e.getMessage());
+        }
+        return realPassword;
+    }
+
+    public void Wishlist(String idPengguna, String idBuku, String statusWishlist) {
+        try {
+            JDBC db = new JDBC();
+            if ("tambah".equals(statusWishlist)) {
+                db.runQuery("INSERT INTO wishlist(idPengguna, idBuku) VALUES ('" + idPengguna + "','" + idBuku + "');");
+            } else if ("hapus".equals(statusWishlist)) {
+                db.runQuery("DELETE FROM wishlist WHERE idPengguna='" + idPengguna + "' AND idBuku='" + idBuku + "';");
+            }
+        } catch (Exception e) {
+            System.out.println("Exception (Wishlist): " + e.getMessage());
         }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    public void BeliBuku() {
+
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    public void RiwayatPembelian() {
+
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Servlet untuk mengatur perubahan username, password, dan wishlist pengguna";
+    public void DaftarBukuDimiliki() {
+
     }
+
+    public void ReviewBuku() {
+
+    }
+
 }
