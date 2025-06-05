@@ -1,99 +1,125 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package classes;
+package servlets;
+import classes.AksesWeb;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  *
  * @author yudha
  */
-public class AksesWeb {
-    private String username;
-    private String password;
-    private String confirmPassword;
-    
-    public AksesWeb(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-    
-    public AksesWeb(String username, String password, String confirmPassword) {
-        this.username = username;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-    }
+@WebServlet(name = "AksesWebController", urlPatterns = {"/AksesWebController"})
+public class AksesWebController extends HttpServlet {
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String login() {
-        String status = "Login berhasil";
-        try {
-            JDBC db = new JDBC();
-            String cekUsername = db.getData("SELECT username FROM pengguna WHERE username ='" + username + "';", "username");
-            String cekPassword = db.getData("SELECT password FROM pengguna WHERE username ='" + username + "';", "password");
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String status = null;
+        try (PrintWriter out = response.getWriter()) {
+            String page = request.getParameter("page"); 
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             
-            //Memeriksa apakah username ada di DB
-            if (cekUsername != null && "admin".equals(cekUsername.trim())){
-                status = "admin";
-            } else if (cekUsername != null){                  
-                status = "Login berhasil";         
-            } else {
-                status = "Username salah";
-            }
-            
-            //Memeriksa apakah password benar
-            if (cekPassword != null && !cekPassword.trim().equals(password.trim())) {
-                status = "Password salah"; 
-            }
+            if ("login".equals(page)){    
+                //menyambungkan ke login.java
+                AksesWeb login = new AksesWeb(username, password);
+                status = login.login();
 
-            System.out.println("STATUS: " + status +"\n"
-                    + "cekPASSWORD: "+cekPassword +"\n PASSWORD: "+password 
-                    + "\n cekUSERNAME: "+cekUsername +"\n USERNAME: "+username);
-        } catch(Exception e){
-            status = "Terjadi kesalahan sistem";
-        }
-        return status;  
-    }
-
-    public String register() {
-        String statusR = "Register berhasil";
-        try {
-            JDBC db = new JDBC();
-            String cekUsername = db.getData("SELECT username FROM pengguna WHERE username ='" + username + "';", "username");
-            
-            if (cekUsername == null){ //Username belum terdaftar di DB
-                if (password.equals(confirmPassword)){ //Password dan confirm password sama
-                    db.runQuery("INSERT pengguna(username, password) VALUES ('"+username+"','"+password+"');");
-                    System.out.println("INSERT pengguna(username, password) VALUES ('"+username+"','"+password+"');");
-                    statusR = "Register berhasil";
-                } else { //Password dan confirm password tidak sama
-                    statusR = "password dan konfirmasi password tidak sama";
+    //            System.out.println("LOGIN CONTROLLER \n STATUS: " + status);
+                if ("Login berhasil".equals(status)) {
+                    // Login sukses → redirect ke halaman menu.jsp
+                    request.getSession().setAttribute("username", username); // kalau mau simpan session
+                    response.sendRedirect("pengguna.jsp");
+                } else if ("admin".equals(status)) {    
+                    request.getSession().setAttribute("username", username); // kalau mau simpan session
+                    response.sendRedirect("AdminPage.jsp");
+                } else {
+                    // Login gagal → kembali ke login.jsp dan tampilkan pesan
+                    request.setAttribute("status", status);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+                    dispatcher.forward(request, response);
                 }
-            } else { //Username sudah digunakan
-                statusR = "Username sudah terdaftar";
-            }
-            
-            System.out.println("STATUS: " + statusR +"\n"
-                    +"\n PASSWORD: "+password+ "\n CONFIRM PASSWORD: " + confirmPassword
-                    + "\n cekUSERNAME: "+cekUsername +"\n USERNAME: "+username);
-        } catch (Exception e) {
-            statusR = e.getMessage();
-        }
-        return statusR;
-    } 
-}
+            } else if ("register".equals(page)){
+                //menyambungkan ke login.java
+                String confirmPassword = request.getParameter("confirm-password");
+                AksesWeb register = new AksesWeb(username, password, confirmPassword);
+                status = register.register();
 
+                if ("Register berhasil".equals(status)) {
+                    // Login sukses → redirect ke halaman menu.jsp
+                    // request.getSession().setAttribute("username", username); // kalau mau simpan session
+                    response.sendRedirect("register-success.jsp");
+                } else {
+                    // Login gagal → kembali ke login.jsp dan tampilkan pesan
+                    request.setAttribute("status", status);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+                    dispatcher.forward(request, response);
+                }
+            }
+        } catch(Exception e) {
+            System.out.println("Exception: "+e.getMessage());
+        } finally {
+            System.out.println("REGISTER CONTROLLER \n STATUS: " + status);            
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
