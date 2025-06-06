@@ -17,25 +17,31 @@ public class JDBC {
     private String message;
     
     public void connect() {
-//        String dbname = "tokoBukuDB";
-//        String username = "martabak";
-//        String password = "PasswordDiGate2";
-        String dbname = "toko_buku";
-        String username = "root";
-        String password = "";
+        //Parameter untuk database cloud menggunakan Azure
+        String dbname = "tokoBukuDB";
+        String username = "martabak";
+        String password = ""; //Password disembunyikan, seharusnya ada isinya
+
+        //Parameter untuk database lokal (MySQL XAMPP)
+        //String dbname = "toko_buku";
+        //String username = "root";
+        //String password = "";
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ dbname, username, password);
-//            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//            String connectionUrl = "jdbc:sqlserver://pbofinalproject.database.windows.net:1433;" +
-//                       "database=" + dbname + ";" +
-//                       "user=" + username + ";" +
-//                       "password=" + password + ";" + 
-//                       "encrypt=true;" +
-//                       "trustServerCertificate=false;" +
-//                       "loginTimeout=30;";
-//
-//            con = DriverManager.getConnection(connectionUrl);
+            // Pengaturan connection untuk database lokal
+            // class.forName("com.mysql.cj.jdbc.Driver");
+            // con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ dbname, username, password);
+
+            // Pengaturan connection untuk database cloud
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String connectionUrl = "jdbc:sqlserver://pbofinalproject.database.windows.net:1433;" +
+                       "database=" + dbname + ";" +
+                       "user=" + username + ";" +
+                       "password=" + password + ";" + 
+                       "encrypt=true;" +
+                       "trustServerCertificate=false;" +
+                       "loginTimeout=30;";
+
+            con = DriverManager.getConnection(connectionUrl);
 
             stmt = con.createStatement();
             isConnected = true;
@@ -60,10 +66,10 @@ public class JDBC {
     public String getData(String query, String namaKolom) {
         String dataDariDB = null;
         try {
-            connect(); // pastikan ini juga membuat stmt
+            connect(); 
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
-                dataDariDB = rs.getString(namaKolom).trim(); // hindari newline
+                dataDariDB = rs.getString(namaKolom).trim(); 
             }
         } catch (Exception e) {
             return "Exception: " + e.getMessage();
@@ -76,7 +82,7 @@ public class JDBC {
     public ResultSet getDataAll(String query) {
         ResultSet rs = null;
         try {
-            connect(); // pastikan ini juga membuat stmt
+            connect();
             rs = stmt.executeQuery(query);
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
@@ -94,17 +100,6 @@ public class JDBC {
         } finally {
             disconnect();
         }
-    }
-
-    public Connection getConnection() {
-        if (con == null) {
-            connect();
-        }
-        return con;
-    }
-
-    public void close() {
-        disconnect();
     }
     
     public List<Map<String, String>> getForumData() {
@@ -129,4 +124,16 @@ public class JDBC {
         }
         return data;
     }
+    
+    public Connection getConnection() {
+        if (con == null) {
+            connect();
+        }
+        return con;
+    }
+    
+    public void close() {
+        disconnect();
+    }
+
 }
