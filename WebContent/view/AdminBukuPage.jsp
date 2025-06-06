@@ -405,7 +405,6 @@
                 sidebar.classList.toggle('hidden');
                 sidebar.style.transform = sidebar.classList.contains('hidden') ? 'translateX(-100%)' : 'translateX(0)';
             }
-            q
         </script>
 
     </body>
