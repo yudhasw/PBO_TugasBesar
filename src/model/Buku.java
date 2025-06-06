@@ -1,11 +1,10 @@
-    package classes;
+package classes;
 
 import classes.JDBC;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Buku {
-
     private String id_buku;
     private String judul;
     private String penulis;
@@ -16,10 +15,9 @@ public class Buku {
     private String deskripsi;
     private String harga;
     private String gambar;
-    
+
     public Buku(){};
     
-    // Constructor
     public Buku(String id_buku, String judul, String penulis, String tahun, String jenis, String isbn, String rating, String deskripsi, String harga) {
         this.judul = judul;
         this.penulis = penulis;
