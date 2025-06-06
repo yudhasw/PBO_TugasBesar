@@ -188,7 +188,7 @@
     </head>
     <body>
         <div class="header">
-            <a href="Pengguna.jsp">
+            <a href="pengguna.jsp">
                 <div class="nama-logo">
                     <img src="imgBuku/Logo.png"/>
                     <h1>E-TokoBuku</h1>
@@ -201,7 +201,7 @@
                     <img src="imgBuku/user.png" id="profile-img" onclick="toggleDropdown()"/>
                 </div>
                 <div id="dropdown-menu" class="dropdown-content">
-                    <a href="profilPengguna.jsp">Profil Pengguna</a>
+                    <a href="profilpengguna.jsp">Profil Pengguna</a>
                     <a href="riwayatTransaksi.jsp">Riwayat Transaksi</a>
                     <a href="wishlist.jsp">Wishlist</a>
                     <a href="logout.jsp">Keluar Akun</a>
