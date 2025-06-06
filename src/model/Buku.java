@@ -1,5 +1,6 @@
-package classes;
+    package classes;
 
+import classes.JDBC;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -14,10 +15,12 @@ public class Buku {
     private String rating;
     private String deskripsi;
     private String harga;
-
-    // Constructor (using all fields)
+    private String gambar;
+    
+    public Buku(){};
+    
+    // Constructor
     public Buku(String id_buku, String judul, String penulis, String tahun, String jenis, String isbn, String rating, String deskripsi, String harga) {
-        this.id_buku = id_buku;
         this.judul = judul;
         this.penulis = penulis;
         this.tahun = tahun;
@@ -28,7 +31,6 @@ public class Buku {
         this.harga = harga;
     }
 
-    // Getters and setters
     public String getId_buku() {
         return id_buku;
     }
@@ -65,6 +67,85 @@ public class Buku {
         return harga;
     }
 
+    public void setId_buku(String id_buku) {
+        this.id_buku = id_buku;
+    }
+
+    public void setJudul(String judul) {
+        this.judul = judul;
+    }
+
+    public void setPenulis(String penulis) {
+        this.penulis = penulis;
+    }
+
+    public void setTahun(String tahun) {
+        this.tahun = tahun;
+    }
+
+    public void setJenis(String jenis) {
+        this.jenis = jenis;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public void setDeskripsi(String deskripsi) {
+        this.deskripsi = deskripsi;
+    }
+
+    public void setHarga(String harga) {
+        this.harga = harga;
+    }
+
+//    public String NewestId() {
+//        System.out.println("TESSSSSSS");
+//        JDBC db = new JDBC();
+//        String nextId = "B001";
+//        try {
+//            ResultSet rs = db.getDataAll("SELECT MAX(id_buku) FROM buku");
+//            if (rs.next()) {
+//                String lastId = rs.getString(1);
+//                System.out.println("LASTID: "+lastId);
+//                if (lastId != null) {
+//                    int nextNum = Integer.parseInt(lastId.substring(1)) + 1; // increment
+//                    nextId = String.format("B%03d", nextNum);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("NEXTID: "+nextId);
+//        return nextId;
+//    }
+
+    public void TambahBuku(String judul, String penulis, String tahun, String jenis, String isbn, String rating, String deskripsi, String harga) {
+        try {
+//            String id = NewestId();
+            gambar = "awdadwadwa";
+            JDBC db = new JDBC();
+            db.runQuery("INSERT INTO buku(judul,penulis,tahun,jenis,isbn,rating,deskripsi,harga,gambar) VALUES ('" + judul + "','" + penulis + "','" + tahun + "','" + jenis + "','" + isbn + "','" + rating + "','" + deskripsi + "','" + harga + "','" + gambar + "')");
+            System.out.println("INSERT INTO buku(judul,penulis,tahun,jenis,isbn,rating,deskripsi,harga,gambar) VALUES ('" + judul + "','" + penulis + "','" + tahun + "','" + jenis + "','" + isbn + "','" + rating + "','" + deskripsi + "','" + harga + "','" + gambar + "')");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void HapusBuku(String id) {
+        try {
+            JDBC db = new JDBC();
+            db.runQuery("DELETE FROM buku WHERE id_buku="+id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    
     // Static method to fetch book details from the database
     public static Buku getBookById(String id_buku) {
         JDBC db = new JDBC();
@@ -105,5 +186,5 @@ public class Buku {
 
         return buku;
     }
-
 }
+
