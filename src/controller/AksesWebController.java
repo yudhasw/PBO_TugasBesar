@@ -49,10 +49,10 @@ public class AksesWebController extends HttpServlet {
                 if ("Login berhasil".equals(status)) {
                     // Login sukses → redirect ke halaman menu.jsp
                     request.getSession().setAttribute("username", username); // kalau mau simpan session
-                    response.sendRedirect("Pengguna.jsp");
+                    response.sendRedirect("pengguna.jsp");
                 } else if ("admin".equals(status)) {    
                     request.getSession().setAttribute("username", username); // kalau mau simpan session
-                    response.sendRedirect("AdminBukuPage.jsp");
+                    response.sendRedirect("AdminPage.jsp");
                 } else {
                     // Login gagal → kembali ke login.jsp dan tampilkan pesan
                     request.setAttribute("status", status);
