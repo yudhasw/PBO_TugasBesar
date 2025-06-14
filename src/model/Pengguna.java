@@ -21,10 +21,7 @@ public class Pengguna {
         this.password = password;
     }
 
-    public Pengguna() {
-    }
-
-    ;
+    public Pengguna() {};
 
     public String updateUsername(String newUsername) {
         String statusR = "Update username berhasil";
