@@ -335,7 +335,7 @@
 
         <div class="container">
             <div class="left">
-                <img src="imgBuku/${buku.id_buku}.jpg" alt="${buku.judul}">
+                <img src="imgBuku/coverBuku.jpg" alt="${buku.judul}">
             </div>
             <div class="right">
                 <h1>${buku.judul}</h1>
@@ -343,9 +343,11 @@
                 <p><strong>Jenis:</strong> ${buku.jenis}</p>
                 <p><strong>Rating:</strong> ${buku.rating} / 5.0 <i class="fas fa-star"></i> </p>
                 <p class="price">Rp${buku.harga}</p>
+                <a href="checkout.jsp?judul=${buku.judul}&harga=${buku.harga}&username=<%= username %>">
                 <div class="btn-container">
                     <button class="btn-beli">Beli</button>
                 </div>
+                </a>
             </div>
         </div>
 
