@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Buku {
+
     private String id_buku;
     private String judul;
     private String penulis;
@@ -15,9 +16,10 @@ public class Buku {
     private String deskripsi;
     private String harga;
     private String gambar;
-
+    
     public Buku(){};
     
+    // Constructor
     public Buku(String id_buku, String judul, String penulis, String tahun, String jenis, String isbn, String rating, String deskripsi, String harga) {
         this.judul = judul;
         this.penulis = penulis;
@@ -100,6 +102,27 @@ public class Buku {
     public void setHarga(String harga) {
         this.harga = harga;
     }
+
+//    public String NewestId() {
+//        System.out.println("TESSSSSSS");
+//        JDBC db = new JDBC();
+//        String nextId = "B001";
+//        try {
+//            ResultSet rs = db.getDataAll("SELECT MAX(id_buku) FROM buku");
+//            if (rs.next()) {
+//                String lastId = rs.getString(1);
+//                System.out.println("LASTID: "+lastId);
+//                if (lastId != null) {
+//                    int nextNum = Integer.parseInt(lastId.substring(1)) + 1; // increment
+//                    nextId = String.format("B%03d", nextNum);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("NEXTID: "+nextId);
+//        return nextId;
+//    }
 
     public void TambahBuku(String judul, String penulis, String tahun, String jenis, String isbn, String rating, String deskripsi, String harga) {
         try {
