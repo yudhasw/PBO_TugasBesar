@@ -378,7 +378,7 @@
                     </button>
                 </a>
                 <a href="login.jsp">
-                    <img src="https://i.pinimg.com/736x/d0/c6/41/d0c641b5e8f7874db6eb2d9a8bbc775e.jpg" alt="<%= rs.getString("judul")%>">
+                    <img src="imgBuku/coverBuku.jpg" alt="<%= rs.getString("judul")%>">
                     <p id="penulis"><%= rs.getString("penulis")%></p>
                     <p id="judul"><%= rs.getString("judul")%></p>
                     <p id="harga">Rp<%= new DecimalFormat("#,##0").format(rs.getFloat("harga")) %></p>
@@ -402,18 +402,24 @@
 
             <a href="login.jsp">
                 <div class="opsi">
-                    <img src="src" alt="Buku Saya"/>
+                    <img src="imgBuku/bukuSaya.jpg" />
                     <p>Buku Saya</p>
                 </div>
             </a>
 
             <a href="login.jsp">
                 <div class="opsi">
-                    <img src="src" alt="Review Buku"/>
+                    <img src="imgBuku/forum.jpg" />
                     <p>Review Buku</p>
                 </div>
             </a>
-
+            
+            <a href="login.jsp">
+                <div class="opsi">
+                    <img src="imgBuku/riwayat.jpg" />
+                    <p>Riwayat Transaksi</p>
+                </div>
+            </a>
         </div>
 
         <script>
