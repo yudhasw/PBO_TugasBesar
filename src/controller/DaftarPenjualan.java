@@ -2,19 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet;
+package servlets;
 import classes.JDBC;
 import java.io.IOException;
 import java.io.PrintWriter;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author SYAUQI
+ * @author yudha
  */
 @WebServlet(name = "DaftarPenjualan", urlPatterns = {"/DaftarPenjualan"})
 public class DaftarPenjualan extends HttpServlet {
@@ -32,8 +32,7 @@ public class DaftarPenjualan extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            String action = request.getParameter("action");
+             String action = request.getParameter("action");
 
         if ("deletePenjualan".equals(action)) {
             String id = request.getParameter("id");
@@ -41,17 +40,16 @@ public class DaftarPenjualan extends HttpServlet {
             if (id != null && !id.isEmpty()) {
                 try {
                     JDBC db = new JDBC();
-                    String sql = "DELETE FROM buku WHERE id ='"+id+"';";
+                    String sql = "DELETE FROM daftar_penjualan WHERE id ='"+id+"';";
                     System.out.println("DELETE FROM pengguna WHERE id ='"+id+"';");
                     db.runQuery(sql);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("DaftarPenjualanPage.jsp");
         }
         }
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
